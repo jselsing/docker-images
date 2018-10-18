@@ -51,6 +51,7 @@ RUN cd /usr/local/share && \
     python setup.py install
 
 RUN . /opt/conda/etc/profile.d/conda.sh && \
+    conda activate grizli-dev && \
     conda install jupyter
 
 ## Environment
