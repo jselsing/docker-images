@@ -83,8 +83,9 @@ RUN . /opt/conda/etc/profile.d/conda.sh && \
 ## Jupyter Notebooks
 
 RUN mkdir /opt/notebooks && \
-    cp /usr/local/share/python/grizli/Grizli-Pipeline.ipynb /opt/notebooks/ && \
-    cp /usr/local/share/python/grizli/Fit-with-Photometry.ipynb /opt/notebooks/
+    cd /usr/local/share/python/grizli/examples/
+    cp Grizli-Pipeline.ipynb /opt/notebooks/ && \
+    cp Fit-with-Photometry.ipynb /opt/notebooks/
 
 ##
 ## MPI Processing
