@@ -83,7 +83,7 @@ RUN . /opt/conda/etc/profile.d/conda.sh && \
 ## Jupyter Notebooks
 
 RUN mkdir /opt/notebooks && \
-    cd /usr/local/share/python/grizli/examples/
+    cd /usr/local/share/python/grizli/examples/ && \
     cp Grizli-Pipeline.ipynb /opt/notebooks/ && \
     cp Fit-with-Photometry.ipynb /opt/notebooks/
 
