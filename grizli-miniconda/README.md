@@ -16,7 +16,7 @@ You can download and run this image using the following commands:
 
 *(jupyter notebook not working)*
 
-Following the instructions for [ContinuumIO/docker-images/miniconda3](https://raw.githubusercontent.com/ContinuumIO/docker-images/miniconda3)
+Following the instructions for [ContinuumIO/docker-images/miniconda3](https://github.com/ContinuumIO/docker-images/tree/master/miniconda3)
 you can also run the image in a Jupyter Notebook server:
 
     docker run -i -t -p 8888:8888 gbrammer/grizli-miniconda /bin/bash -c ". /opt/conda/etc/profile.d/conda.sh; conda activate grizli-dev; conda install -y jupyter; jupyter notebook --notebook-dir=/opt/notebooks --ip='*' --port=8888 --no-browser"
