@@ -14,6 +14,8 @@ You can download and run this image using the following commands:
     docker pull gbrammer/grizli-miniconda
     docker run -i -t gbrammer/grizli-miniconda /bin/bash
 
+*(jupyter notebook not working)*
+
 Following the instructions for [ContinuumIO/docker-images/miniconda3](https://raw.githubusercontent.com/ContinuumIO/docker-images/miniconda3)
 you can also run the image in a Jupyter Notebook server:
 
