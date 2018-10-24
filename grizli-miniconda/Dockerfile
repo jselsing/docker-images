@@ -23,8 +23,8 @@ RUN cd /usr/local/share && \
     rm ~/miniconda.sh && \
     /opt/conda/bin/conda clean -tipsy && \
     ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-    echo ". /opt/conda/etc/profile.d/conda.sh" >> /root/.bashrc && \
-    . /opt/conda/etc/profile.d/conda.sh
+    echo ". /etc/profile.d/conda.sh" >> /root/.bashrc && \
+    . /etc/profile.d/conda.sh
 
 ##
 ## ESO fits tools
@@ -44,15 +44,11 @@ RUN cd /usr/local/share && \
     cd python && \
     git clone https://github.com/gbrammer/grizli.git && \
     cd grizli && \
-    . /opt/conda/etc/profile.d/conda.sh && \
+    . /etc/profile.d/conda.sh && \
     conda env create -f environment_min.yml -n grizli-dev && \
     echo "conda activate grizli-dev" >> /root/.bashrc && \
     conda activate grizli-dev && \
     python setup.py install
-
-RUN . /opt/conda/etc/profile.d/conda.sh && \
-    conda activate grizli-dev && \
-    conda install jupyter
 
 ## Environment
 
@@ -73,7 +69,7 @@ ENV GRIZLI /usr/local/share/grizli
 ENV iref   /usr/local/share/grizli/iref/
 ENV jref   /usr/local/share/grizli/jref/
 
-RUN . /opt/conda/etc/profile.d/conda.sh && \
+RUN . /etc/profile.d/conda.sh && \
     conda activate grizli-dev && \
     python -c "import grizli.utils; grizli.utils.fetch_default_calibs(ACS=False)"  && \
     python -c "import grizli.utils; grizli.utils.fetch_config_files()"             && \
@@ -102,7 +98,7 @@ RUN mkdir /opt/notebooks && \
 #     cd ../ && \
 #     rm -rf mpich-3.2.1*
 # 
-# RUN . /opt/conda/etc/profile.d/conda.sh && \
+# RUN . /etc/profile.d/conda.sh && \
 #     conda activate grizli-dev && \
 #     conda install mpi4py
 
