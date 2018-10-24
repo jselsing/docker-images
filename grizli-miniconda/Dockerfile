@@ -23,7 +23,7 @@ RUN cd /usr/local/share && \
     rm ~/miniconda.sh && \
     /opt/conda/bin/conda clean -tipsy && \
     ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+    echo ". /opt/conda/etc/profile.d/conda.sh" >> /root/.bashrc && \
     . /opt/conda/etc/profile.d/conda.sh
 
 ##
@@ -46,7 +46,7 @@ RUN cd /usr/local/share && \
     cd grizli && \
     . /opt/conda/etc/profile.d/conda.sh && \
     conda env create -f environment_min.yml -n grizli-dev && \
-    echo "conda activate grizli-dev" >> ~/.bashrc && \
+    echo "conda activate grizli-dev" >> /root/.bashrc && \
     conda activate grizli-dev && \
     python setup.py install
 
@@ -63,15 +63,15 @@ RUN mkdir /usr/local/share/grizli               && \
     mkdir /usr/local/share/grizli/jref          && \
     mkdir /usr/local/share/grizli/uref
     
-RUN echo "export GRIZLI=\"/usr/local/share/grizli\"" >> ~/.bashrc     && \
-    echo "export GRIZLICODE=\"/usr/local/share/python/grizli\"" >> ~/.bashrc && \
-    echo "export iref=\"\${GRIZLI}/iref/\"" >> ~/.bashrc              && \
-    echo "export jref=\"\${GRIZLI}/jref/\"" >> ~/.bashrc              && \
-    echo "export uref=\"\${GRIZLI}/uref/\"" >> ~/.bashrc
+RUN echo "export GRIZLI=\"/usr/local/share/grizli\"" >> /root/.bashrc     && \
+    echo "export GRIZLICODE=\"/usr/local/share/python/grizli\"" >> /root/.bashrc && \
+    echo "export iref=\"\${GRIZLI}/iref/\"" >> /root/.bashrc              && \
+    echo "export jref=\"\${GRIZLI}/jref/\"" >> /root/.bashrc              && \
+    echo "export uref=\"\${GRIZLI}/uref/\"" >> /root/.bashrc
 
 ENV GRIZLI /usr/local/share/grizli
-ENV iref   /usr/local/share/grizli/iref
-ENV jref   /usr/local/share/grizli/jref
+ENV iref   /usr/local/share/grizli/iref/
+ENV jref   /usr/local/share/grizli/jref/
 
 RUN . /opt/conda/etc/profile.d/conda.sh && \
     conda activate grizli-dev && \
