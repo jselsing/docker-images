@@ -84,6 +84,26 @@ RUN mkdir /opt/notebooks && \
     cp Grizli-Pipeline.ipynb /opt/notebooks/ && \
     cp Fit-with-Photometry.ipynb /opt/notebooks/
 
+## Prospector for grizli + eazy, just uses the smoothing function....
+
+RUN . /etc/profile.d/conda.sh && \
+    conda activate grizli-dev && \
+    cd /usr/local/share/python && \
+    git clone https://github.com/bd-j/prospector.git && \
+    cd prospector && \
+    python setup.py install
+
+
+# ## EAZY-py (already installed with grizli)
+# RUN . /etc/profile.d/conda.sh && \
+#     conda activate grizli-dev && \
+#     cd /usr/local/share/python && \
+#     git clone --recursive git@github.com:gbrammer/eazy-py.git && \
+#     cd eazy-py && \
+#     ln -sf ../eazy-photoz . && \
+#     python setup.py install && \
+#     echo "export EAZYCODE=\"/usr/local/share/python/eazy-photoz\"" >> /root/.bashrc 
+    
 ##
 ## MPI Processing
 ##

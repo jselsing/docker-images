@@ -10,8 +10,18 @@ Usage
 You can download and run this image using the following commands:
 
     docker pull gbrammer/grizli-miniconda
-    docker run -i -t gbrammer/grizli-miniconda /bin/bash
-
+    
+    # Set some working directory where products can be saved 
+    # outside of the docker container
+    DOCKER_WORKDIR=/tmp/ 
+    
+    # Avoid collision with non-docker notebooks at 8888
+    NOTEBOOK_PORT=8008 
+    
+    docker run -v $DOCKER_WORKDIR:/workdir -p $NOTEBOOK_PORT:$NOTEBOOK_PORT -i -t gbrammer/grizli-miniconda /bin/bash
+    
+    # jupyter notebook --notebook-dir=/opt/notebooks --ip='0.0.0.0' --port=8008 --no-browser --allow-root
+    
 *(testing notebook implementation)*
 
 Following the instructions for [ContinuumIO/docker-images/miniconda3](https://github.com/ContinuumIO/docker-images/tree/master/miniconda3) you can also run the image in a Jupyter Notebook server:
