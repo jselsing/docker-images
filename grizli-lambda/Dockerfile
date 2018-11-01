@@ -79,6 +79,24 @@ RUN source ${VIRTUAL_ENV}/bin/activate && \
     cd /tmp/ && \
     python setup_grizli.py
 
+## Eazy-py
+RUN cd /tmp/ && \
+    source ${VIRTUAL_ENV}/bin/activate && \
+    git clone https://github.com/gbrammer/eazy-py.git && \
+    cd eazy-py && \
+    python setup.py install && \
+    cd ../ && \
+    rm -rf eazy-py
+
+## Prospector for grizli + eazy, just uses the smoothing function....
+RUN cd /tmp/ && \
+    source ${VIRTUAL_ENV}/bin/activate && \
+    git clone https://github.com/bd-j/prospector.git && \
+    cd prospector && \
+    python setup.py install && \
+    cd ../ && \
+    rm -rf prospector
+    
 ############
 ## Final stripped and zipped virtual environment
 ADD ./Install/process.py ${VIRTUAL_ENV}/
