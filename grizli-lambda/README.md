@@ -10,7 +10,7 @@ Usage
 Download and run this image using the following commands:
 
     docker pull gbrammer/grizli-lambda
-    docker run -v $(pwd):/workdir -i -t gbrammer/grizli-lambda /bin/bash -c "cp /tmp/venv.zip /workdir/"
+    docker run -v $(pwd):/workdir -i -t gbrammer/grizli-lambda /bin/bash -c "bash /tmp/package_venv.sh /venv/"
     ls -lth venv.zip
 
 All `*.py` files in the working directory `$(pwd)` are copied to the zipped python environment and pushed to the zip file, which are then accessible to AWS Lambda functions. 

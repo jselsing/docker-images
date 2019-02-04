@@ -40,3 +40,5 @@ pushd $VIRTUAL_ENV && zip -r -9 -q /tmp/process.zip *.py; popd
 pushd $VIRTUAL_ENV/lib/python3.6/site-packages/ && zip -r -9 --out /tmp/partial-venv.zip -q /tmp/process.zip * ; popd
 pushd $VIRTUAL_ENV/lib64/python3.6/site-packages/ && zip -r -9 --out /tmp/venv.zip -q /tmp/partial-venv.zip * ; popd
 echo "site-packages compressed size $(du -sh /tmp/venv.zip | cut -f1)"
+
+cp /tmp/venv.zip /workdir/

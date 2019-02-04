@@ -1,9 +1,8 @@
 FROM amazonlinux:2017.09
 
-#  docker build . -t gbrammer/grizli-lambda:latest
-#  docker run --rm -it gbrammer/grizli-lambda:latest /bin/bash
-#  docker push gbrammer/grizli-lambda:latest
-#  docker push gbrammer/grizli:2018.10a
+#  docker build . -t gbrammer/grizli-lambda-test:latest
+#  docker run --rm -it gbrammer/grizli-lambda-test:latest /bin/bash
+
 
 #ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
@@ -98,14 +97,18 @@ RUN cd /tmp/ && \
     python setup.py install && \
     cd ../ && \
     rm -rf prospector
-    
+
+############
+## Working directory for passing data in/out
+RUN mkdir /workdir
+   
 ############
 ## Final stripped and zipped virtual environment
 ADD ./Install/process.py ${VIRTUAL_ENV}/
-ADD ./Install/strip_virtualenv.sh /tmp/
+ADD ./Install/package_venv.sh /tmp/
 RUN source ${VIRTUAL_ENV}/bin/activate && \
     cd /tmp/ && \
-    bash /tmp/strip_virtualenv.sh ${VIRTUAL_ENV}
+    bash /tmp/package_venv.sh ${VIRTUAL_ENV}
 
 #############
 ## Install boto3 for testing, credentials file
@@ -115,7 +118,5 @@ RUN source ${VIRTUAL_ENV}/bin/activate && \
     echo "Put AWS credentials in ~/.aws/credentials"
 
 ADD ./Install/aws_credentials ~/.aws/credentials
-
-RUN mkdir /workdir
 
 CMD [ "/bin/bash" ]
