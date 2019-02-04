@@ -1,8 +1,8 @@
 FROM amazonlinux:2017.09
 
-#  docker build . -t gbrammer/grizli-lambda-test:latest
-#  docker run --rm -it gbrammer/grizli-lambda-test:latest /bin/bash
-#  docker push gbrammer/grizli:latest
+#  docker build . -t gbrammer/grizli-lambda:latest
+#  docker run --rm -it gbrammer/grizli-lambda:latest /bin/bash
+#  docker push gbrammer/grizli-lambda:latest
 #  docker push gbrammer/grizli:2018.10a
 
 #ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
@@ -44,9 +44,11 @@ RUN source ${VIRTUAL_ENV}/bin/activate && \
     pip install stwcs && \
     pip install peakutils && \
     pip install extinction && \
-    pip install git+https://github.com/gbrammer/drizzle.git
+    pip install shapely && \
+    #pip install git+https://github.com/gbrammer/drizzle.git && \
+    pip install git+https://github.com/gbrammer/drizzlepac.git
     
-### Special matplotlibrc file
+##### Special matplotlibrc file
 
 # Initialize matplotib directory
 RUN source ${VIRTUAL_ENV}/bin/activate && \
@@ -110,7 +112,7 @@ RUN source ${VIRTUAL_ENV}/bin/activate && \
 RUN source ${VIRTUAL_ENV}/bin/activate && \
     pip install boto3 && \
     mkdir ~/.aws/ && \
-    echo "Put AWS credentials in ~/.aws/credentials!"
+    echo "Put AWS credentials in ~/.aws/credentials"
 
 ADD ./Install/aws_credentials ~/.aws/credentials
 

@@ -1,6 +1,6 @@
 backend : Agg
 backend_fallback: True
-interactive : True
+interactive : False
 
 legend.scatterpoints : 1
 legend.fontsize : small
