@@ -34,11 +34,20 @@ find $VIRTUAL_ENV -name "__pycache__" -type d -prune -exec rm -rf {} \;
 echo "venv stripped size $(du -sh $VIRTUAL_ENV | cut -f1)"
 
 # Make zip file
-cp /workdir/*.py $VIRTUAL_ENV
+if [ -e /workdir/ ]; then 
+    files=`ls /workdir/*.py`
+    for file in $files; do 
+        echo "Add python file: ${file}"
+        cp $file $VIRTUAL_ENV
+    done
+fi
+
 pushd $VIRTUAL_ENV && zip -r -9 -q /tmp/process.zip *.py; popd
 
 pushd $VIRTUAL_ENV/lib/python3.6/site-packages/ && zip -r -9 --out /tmp/partial-venv.zip -q /tmp/process.zip * ; popd
 pushd $VIRTUAL_ENV/lib64/python3.6/site-packages/ && zip -r -9 --out /tmp/venv.zip -q /tmp/partial-venv.zip * ; popd
 echo "site-packages compressed size $(du -sh /tmp/venv.zip | cut -f1)"
 
-cp /tmp/venv.zip /workdir/
+if [ -e /workdir/ ]; then 
+    cp /tmp/venv.zip /workdir/
+fi

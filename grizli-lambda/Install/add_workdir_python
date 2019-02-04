@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ -e /workdir ]; then 
+    
+    cd /workdir/
+    
+    files=`ls *.py`
+    for file in $files; do 
+        echo "Add file: ${file} > venv_script.zip"
+    done
+    
+    zip -r -9 --out /workdir/venv_script.zip -q /tmp/venv.zip *.py
+    
+else
+    echo "Directory /workdir/ not found"
+fi
+

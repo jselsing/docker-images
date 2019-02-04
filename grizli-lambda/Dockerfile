@@ -97,10 +97,6 @@ RUN cd /tmp/ && \
     python setup.py install && \
     cd ../ && \
     rm -rf prospector
-
-############
-## Working directory for passing data in/out
-RUN mkdir /workdir
    
 ############
 ## Final stripped and zipped virtual environment
@@ -118,5 +114,11 @@ RUN source ${VIRTUAL_ENV}/bin/activate && \
     echo "Put AWS credentials in ~/.aws/credentials"
 
 ADD ./Install/aws_credentials ~/.aws/credentials
+
+ADD ./Install/add_workdir_python /usr/local/bin/add_workdir_python
+
+# ############
+# ## Working directory for passing data in/out
+# RUN mkdir /workdir
 
 CMD [ "/bin/bash" ]
