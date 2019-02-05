@@ -6,6 +6,13 @@ echo "venv stripped size $(du -sh $VIRTUAL_ENV | cut -f1)"
 
 rm -rf $VIRTUAL_ENV/lib64/python3.6/site-packages/matplotlib/mpl-data/sample_data
 
+for pkg in sphinx babel; do
+    if [ -e "$VIRTUAL_ENV/lib64/python3.6/site-packages/${pkg}" ]; then 
+        echo "remove $pkg"
+        rm -rf "$VIRTUAL_ENV/lib64/python3.6/site-packages/${pkg}"
+    fi
+done
+
 tar -cvf "$VIRTUAL_ENV/lib64/python3.6/site-packages/astropy.tar" "$VIRTUAL_ENV/lib64/python3.6/site-packages/astropy"
 rm -rf "$VIRTUAL_ENV/lib64/python3.6/site-packages/astropy"
 

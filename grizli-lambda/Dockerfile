@@ -32,20 +32,26 @@ RUN /usr/bin/virtualenv-3.6 \
     --python /usr/bin/python3.6 ${VIRTUAL_ENV} \
     --always-copy \
     --no-site-packages
-    
+
+### For cc1plus compiler
+ENV PATH "${PATH}:/usr/libexec/gcc/x86_64-amazon-linux/4.8.5/"
+   
 ### Install minimal Python tools
 RUN source ${VIRTUAL_ENV}/bin/activate && \
     pip install --upgrade setuptools && \
+    pip install wheel && \
     pip install numpy && \
     pip install scipy && \
     pip install matplotlib && \
     pip install astropy && \
-    pip install stwcs && \
+    pip install drizzlepac && \
     pip install peakutils && \
     pip install extinction && \
-    pip install shapely && \
-    #pip install git+https://github.com/gbrammer/drizzle.git && \
-    pip install git+https://github.com/gbrammer/drizzlepac.git
+    pip install shapely
+
+### Lightweight fork for low-level drizzle functions (AstroDrizzle won't work)
+# RUN source ${VIRTUAL_ENV}/bin/activate && \
+#     pip install git+https://github.com/gbrammer/drizzlepac.git
     
 ##### Special matplotlibrc file
 
@@ -97,10 +103,16 @@ RUN cd /tmp/ && \
     python setup.py install && \
     cd ../ && \
     rm -rf prospector
-   
+
+### Problem with paths
+RUN mv /venv/lib/python3.6/site-packages/stsci/skypac /venv/lib64/python3.6/site-packages/stsci/ && \
+    mv /venv/lib/python3.6/site-packages/stsci/tools /venv/lib64/python3.6/site-packages/stsci/
+    
 ############
 ## Final stripped and zipped virtual environment
 ADD ./Install/process.py ${VIRTUAL_ENV}/
+ADD ./Install/aws_drizzler.py ${VIRTUAL_ENV}/
+
 ADD ./Install/package_venv.sh /tmp/
 RUN source ${VIRTUAL_ENV}/bin/activate && \
     cd /tmp/ && \
@@ -121,4 +133,14 @@ ADD ./Install/add_workdir_python /usr/local/bin/add_workdir_python
 # ## Working directory for passing data in/out
 # RUN mkdir /workdir
 
+#############
+# REF directories
+RUN mkdir /tmp/iref && \
+    mkdir /tmp/uref && \
+    mkdir /tmp/jref
+
+ENV iref /tmp/iref/
+ENV jref /tmp/jref/
+ENV uref /tmp/uref/
+     
 CMD [ "/bin/bash" ]
