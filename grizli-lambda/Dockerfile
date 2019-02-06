@@ -47,6 +47,7 @@ RUN source ${VIRTUAL_ENV}/bin/activate && \
     pip install drizzlepac && \
     pip install peakutils && \
     pip install extinction && \
+    pip install descartes && \
     pip install shapely
 
 ### Lightweight fork for low-level drizzle functions (AstroDrizzle won't work)
