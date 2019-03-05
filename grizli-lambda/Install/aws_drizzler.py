@@ -55,7 +55,7 @@ def group_by_filter():
     
 DEFAULT_RGB = {'output_dpi': 75, 'add_labels':False, 'output_format':'png', 'show_ir':False, 'scl':2, 'suffix':'.rgb'}
 
-def drizzle_images(label='macs0647-jd1', ra=101.9822125, dec=70.24326667, pixscale=0.06, size=10, pixfrac=0.8, kernel='square', theta=0, half_optical_pixscale=False, filters=['f160w','f814w', 'f140w','f125w','f105w','f110w','f098m','f850lp', 'f775w', 'f606w','f475w'], remove=True, rgb_params=DEFAULT_RGB, master='grizli-jan2019', aws_bucket='s3://grizli/CutoutProducts/', scale_ab=21, sync_fits=True, subtract_median=True):
+def drizzle_images(label='macs0647-jd1', ra=101.9822125, dec=70.24326667, pixscale=0.06, size=10, pixfrac=0.8, kernel='square', theta=0, half_optical_pixscale=False, filters=['f160w','f814w', 'f140w','f125w','f105w','f110w','f098m','f850lp', 'f775w', 'f606w','f475w'], remove=True, rgb_params=DEFAULT_RGB, master='grizli-jan2019', aws_bucket='s3://grizli/CutoutProducts/', scale_ab=21, sync_fits=True, subtract_median=True, include_saturated=True):
     """
     label='cp561356'; ra=150.208875; dec=1.850241667; size=40; filters=['f160w','f814w', 'f140w','f125w','f105w','f606w','f475w']
     
@@ -159,7 +159,7 @@ def drizzle_images(label='macs0647-jd1', ra=101.9822125, dec=70.24326667, pixsca
         
         print('\n\n###\nMake filter: {0}'.format(filt))
         
-        status = utils.drizzle_from_visit(visits[0], h, pixfrac=pixfrac, kernel=kernel, clean=remove)
+        status = utils.drizzle_from_visit(visits[0], h, pixfrac=pixfrac, kernel=kernel, clean=remove, include_saturated=include_saturated)
         
         if status is not None:
             sci, wht, outh = status
@@ -170,6 +170,7 @@ def drizzle_images(label='macs0647-jd1', ra=101.9822125, dec=70.24326667, pixsca
                 sci -= med
                 outh['IMGMED'] = (med, 'Median subtracted from the image')
             else:
+                med = 0.
                 outh['IMGMED'] = (med, 'Median subtracted from the image')
                 
             pyfits.writeto('{0}-{1}_drz_sci.fits'.format(label, filt), 
@@ -177,7 +178,7 @@ def drizzle_images(label='macs0647-jd1', ra=101.9822125, dec=70.24326667, pixsca
                            output_verify='fix')
             
             pyfits.writeto('{0}-{1}_drz_wht.fits'.format(label, filt), 
-                           data=sci, header=outh, overwrite=True, 
+                           data=wht, header=outh, overwrite=True, 
                            output_verify='fix')
             
             has_filts.append(filt)
@@ -221,6 +222,57 @@ def drizzle_images(label='macs0647-jd1', ra=101.9822125, dec=70.24326667, pixsca
         #os.system("""echo "<pre>" > index.html; aws s3 ls AWSBUCKETX --human-readable | sort -k 1 -k 2 | grep -v index | awk '{printf("%s %s",$1, $2); printf(" %6s %s ", $3, $4); print "<a href="$5">"$5"</a>"}'>> index.html; aws s3 cp index.html AWSBUCKETX --acl public-read""".replace('AWSBUCKETX', aws_bucket))
     
     return has_filts
+
+def get_cutout_from_aws(label='macs0647-jd1', ra=101.9822125, dec=70.24326667, master='grizli-jan2019', scale_ab=21, remove=1, aws_bucket="s3://grizli/DropoutThumbnails/", lambda_func='grizliImagingCutout', force=False, **kwargs):
+    """
+    Get cutout using AWS lambda
+    """    
+    import boto3
+    import json
+    
+    #func = 'grizliImagingCutout'
+    
+    #label = '{0}_{1:05d}'.format(self.cat['root'][ix], self.cat['id'][ix])
+    #url = 'https://s3.amazonaws.com/grizli/DropoutThumbnails/{0}.thumb.png'
+    
+    session = boto3.Session()
+    client = session.client('lambda', region_name='us-east-1')
+            
+    event = {
+          'label': label,
+          "ra": ra,
+          "dec": dec,
+          "scale_ab": scale_ab,
+          "aws_bucket":aws_bucket,
+          "remove":remove,
+          "master":master,
+        }
+    
+    for k in kwargs:
+        event[k] = kwargs[k]
+        
+    bucket_split = aws_bucket.strip("s3://").split('/')
+    bucket_name = bucket_split[0]
+    bucket_path = '/'.join(bucket_split[1:])
+    
+    s3 = boto3.resource('s3')
+    s3_client = boto3.client('s3')
+    bkt = s3.Bucket(bucket_name)
+    
+    files = [obj.key for obj in bkt.objects.filter(Prefix='{0}/{1}.thumb.png'.format(bucket_path, label))]
+    
+    if (len(files) == 0) | force:
+        print('Call lambda: {0}'.format(label))
+        response = client.invoke(
+            FunctionName=lambda_func,
+            InvocationType='Event',
+            LogType='Tail',
+            Payload=json.dumps(event))
+    else:
+        response = None
+        print('Thumb exists')
+        
+    return response
     
 def handler(event, context):
     import os

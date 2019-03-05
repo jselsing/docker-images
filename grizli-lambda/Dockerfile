@@ -2,6 +2,8 @@ FROM amazonlinux:2017.09
 
 #  docker build . -t gbrammer/grizli-lambda-test:latest
 #  docker run --rm -it gbrammer/grizli-lambda-test:latest /bin/bash
+
+#  ## Build the full venv.zip file and copy to AWS
 #  cd /tmp/ ; docker run -v $(pwd):/workdir -i -t gbrammer/grizli-lambda-test /bin/bash -c "cp /tmp/venv.zip /workdir/"; cd - ; aws s3 cp /tmp/venv.zip s3://aws-grivam/tmp/venv.zip
 
 #ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
