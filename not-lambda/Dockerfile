@@ -1,10 +1,10 @@
 FROM amazonlinux:2017.09
 
-#  docker build . -t gbrammer/grizli-lambda-test:latest
-#  docker run --rm -it gbrammer/grizli-lambda-test:latest /bin/bash
+#  docker build . -t jselsing/not-lambda:latest
+#  docker run --rm -it jselsing/not-lambda:latest /bin/bash
 
 #  ## Build the full venv.zip file and copy to AWS
-#  cd /tmp/ ; docker run -v $(pwd):/workdir -i -t gbrammer/grizli-lambda-test /bin/bash -c "cp /tmp/venv.zip /workdir/"; cd - ; aws s3 cp /tmp/venv.zip s3://aws-grivam/tmp/venv.zip
+#  cd /tmp/ ; docker run -v $(pwd):/workdir -i -t jselsing/not-lambda /bin/bash -c "cp /tmp/venv.zip /workdir/"; cd - ; aws s3 cp /tmp/venv.zip s3://aws-grivam/tmp/venv.zip
 
 #ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
@@ -37,7 +37,7 @@ RUN /usr/bin/virtualenv-3.6 \
 
 ### For cc1plus compiler
 ENV PATH "${PATH}:/usr/libexec/gcc/x86_64-amazon-linux/4.8.5/"
-   
+
 ### Install minimal Python tools
 RUN source ${VIRTUAL_ENV}/bin/activate && \
     pip install --upgrade setuptools && \
@@ -46,16 +46,9 @@ RUN source ${VIRTUAL_ENV}/bin/activate && \
     pip install scipy && \
     pip install matplotlib && \
     pip install astropy && \
-    pip install drizzlepac && \
-    pip install peakutils && \
-    pip install extinction && \
-    pip install descartes && \
-    pip install shapely
+    pip install astroplan
 
-### Lightweight fork for low-level drizzle functions (AstroDrizzle won't work)
-# RUN source ${VIRTUAL_ENV}/bin/activate && \
-#     pip install git+https://github.com/gbrammer/drizzlepac.git
-    
+
 ##### Special matplotlibrc file
 
 # Initialize matplotib directory
@@ -65,52 +58,7 @@ RUN source ${VIRTUAL_ENV}/bin/activate && \
 ADD ./Install/matplotlibrc /root/.config/matplotlib/matplotlibrc
 ADD ./Install/matplotlibrc ${VIRTUAL_ENV}/
 
-####
-# Install grizli
-####
-RUN cd /tmp/ && \
-    source ${VIRTUAL_ENV}/bin/activate && \
-    git clone https://github.com/gbrammer/grizli.git && \
-    cd grizli && \
-    python setup.py install && \
-    cd ../ && \
-    rm -rf grizli
-    
-# Config files in GRIZLI_PATH
-RUN source ${VIRTUAL_ENV}/bin/activate && \
-    GRIZLI_PATH=`python -c "import grizli; print(grizli.GRIZLI_PATH)" | tail -1`  && \
-    echo $GRIZLI_PATH && \
-    cp ${VIRTUAL_ENV}/matplotlibrc ${GRIZLI_PATH}/matplotlibrc && \
-    mkdir $GRIZLI_PATH/CONF/ && \
-    ln -s $GRIZLI_PATH/CONF /tmp/
 
-ADD ./Install/setup_grizli.py /tmp/
-RUN source ${VIRTUAL_ENV}/bin/activate && \
-    cd /tmp/ && \
-    python setup_grizli.py
-
-## Eazy-py
-RUN cd /tmp/ && \
-    source ${VIRTUAL_ENV}/bin/activate && \
-    git clone https://github.com/gbrammer/eazy-py.git && \
-    cd eazy-py && \
-    python setup.py install && \
-    cd ../ && \
-    rm -rf eazy-py
-
-## Prospector for grizli + eazy, just uses the smoothing function....
-RUN cd /tmp/ && \
-    source ${VIRTUAL_ENV}/bin/activate && \
-    git clone https://github.com/bd-j/prospector.git && \
-    cd prospector && \
-    python setup.py install && \
-    cd ../ && \
-    rm -rf prospector
-
-### Problem with paths
-RUN mv /venv/lib/python3.6/site-packages/stsci/skypac /venv/lib64/python3.6/site-packages/stsci/ && \
-    mv /venv/lib/python3.6/site-packages/stsci/tools /venv/lib64/python3.6/site-packages/stsci/
-    
 ############
 ## Final stripped and zipped virtual environment
 ADD ./Install/process.py ${VIRTUAL_ENV}/
@@ -145,5 +93,5 @@ RUN mkdir /tmp/iref && \
 ENV iref /tmp/iref/
 ENV jref /tmp/jref/
 ENV uref /tmp/uref/
-     
+
 CMD [ "/bin/bash" ]
